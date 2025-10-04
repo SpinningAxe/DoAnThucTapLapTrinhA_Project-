@@ -13,7 +13,7 @@ import { DecoButton, DecoButton_Dark } from './Decorations/DecoButton';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { searchForBooks } from '../slices/bookSlice';
+import { searchForBooks, selectChapter } from '../slices/bookSlice';
 
 const BookDetail = ({ theBook }) => {
     const navigation = useNavigation();
@@ -220,16 +220,25 @@ const MoreDetailsOption1 = ({ theBook }) => {
     )
 }
 const MoreDetailsOption2 = ({ theBook }) => {
+    const dispatch = useDispatch();
+
     if (theBook.chapterList == null) return (null);
+
     const ChapterComponent = ({ index, chapterName }) => {
         const navigation = useNavigation();
         return (
             <TouchableOpacity style={styles.cc_container}
-                onPress={() => navigation.navigate("PageScreen")}
+                onPress={() => {
+                    dispatch(selectChapter({ currentBook: theBook, currentChapter: index }))
+                    navigation.navigate("PageScreen")
+                }}
             >
                 <View style={styles.cc_decor} />
-                <Text style={styles.cc_text}>Chương {index + 1}: {chapterName}</Text>
-            </TouchableOpacity>
+                <Text style={styles.cc_text}>
+                    Chương {index + 1}
+                    {chapterName != null && ": "} 
+                    {chapterName}</Text>
+            </TouchableOpacity >
         )
     }
 
@@ -239,7 +248,7 @@ const MoreDetailsOption2 = ({ theBook }) => {
             <View style={styles.mdo_textBox}>
                 {
                     theBook.chapterList.map((chapterName, index) =>
-                        <ChapterComponent index={index} chapterName={chapterName} />
+                        <ChapterComponent index={index} chapterName={chapterName} key={index + chapterName} />
                     )
                 }
             </View>
@@ -279,6 +288,7 @@ const MoreDetailsOption3 = ({ theBook, bookDatabase }) => {
 const BookDetailScreen = ({ navigation }) => {
     const theBook = useSelector((state) => state.books.selectedBook);
     const bookDatabase = useSelector((state) => state.books.bookDatabase);
+    const dispatch = useDispatch();
 
     const route = useRoute();
     const { book } = route.params || {};
@@ -302,7 +312,10 @@ const BookDetailScreen = ({ navigation }) => {
 
                 <TouchableOpacity style={{ zIndex: 999, marginVertical: 5 }}
                     activeOpacity={1}
-                    onPress={() => navigation.navigate('PageScreen')}
+                    onPress={() => {
+                        dispatch(selectChapter({ currentBook: theBook, currentChapter: 0 }))
+                        navigation.navigate('PageScreen')
+                    }}
                 >
                     <DecoButton ButtonText="ĐỌC NGAY" ButtonIcon="import-contacts" />
                 </TouchableOpacity>
@@ -505,7 +518,6 @@ const styles = StyleSheet.create({
         width: '100%',
         height: "max-content",
         marginTop: 15,
-        marginBottom: 160,
 
         backgroundColor: colors.gray
     },

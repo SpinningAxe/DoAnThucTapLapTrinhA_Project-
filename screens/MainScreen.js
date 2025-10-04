@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { LinearGradient } from 'expo-linear-gradient';
 
 import { bookCover, colors, globalStyles } from './GlobalStyle';
@@ -48,7 +48,7 @@ const Catalogue = ({ catalogueList }) => {
       <View style={[styles.c_row, { top: -45 }]}>
         {
           catalogueRow_1.map((catalogue) => (
-            <View style={styles.c_book} key={catalogue.cover}>
+            <View style={styles.c_book} key={"row1" + catalogue.title}>
               <Image
                 source={bookCover[catalogue.cover]}
                 style={styles.c_bookImg}
@@ -61,7 +61,7 @@ const Catalogue = ({ catalogueList }) => {
       <View style={[styles.c_row]}>
         {
           catalogueRow_2.map((catalogue) => (
-            <View style={styles.c_book} key={catalogue.title}>
+            <View style={styles.c_book} key={"row2" + catalogue.title}>
               <Image
                 source={bookCover[catalogue.cover]}
                 style={styles.c_bookImg}
@@ -74,7 +74,7 @@ const Catalogue = ({ catalogueList }) => {
       <View style={[styles.c_row, { bottom: -45 }]}>
         {
           catalogueRow_3.map((catalogue) => (
-            <View style={styles.c_book} key={catalogue.id}>
+            <View style={styles.c_book} key={"row3" + catalogue.title}>
               <Image
                 source={bookCover[catalogue.cover]}
                 style={styles.c_bookImg}
@@ -90,11 +90,11 @@ const Catalogue = ({ catalogueList }) => {
 }
 const MainScreen = ({ navigation }) => {
   const bookDatabase = useSelector((state) => state.books.bookDatabase);
+  const currentBook = useSelector((state) => state.books.selectedBook);
 
   const catalogueList = createRandomList(bookDatabase, 10);
   const listOfBooks = createRandomList(bookDatabase, 10);
   const listOfComics = createRandomList(bookDatabase, 10);
-  const currentBook = bookDatabase.at(getRandomInt(0, bookDatabase.length - 1));
 
   return (
     <View style={styles.container}>
@@ -153,7 +153,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
 
     backgroundColor: colors.gray,
-    opacity: 0.1,
+    opacity: 0.2,
   },
   c_bookImg: {
     width: "100%",

@@ -2,21 +2,23 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
-// import { useSelector, useDispatch } from "react-redux";
-// import { searchForBooks } from '../slices/bookSlice';
+import { useSelector, useDispatch } from "react-redux";
+import { selectChapter } from '../../slices/bookSlice';
 
 import { colors, bookCover } from '../GlobalStyle';
 import { Filigree2, Filigree4 } from '../Decorations/Filigree';
 import { DecoButton } from '../Decorations/DecoButton';
 
-const CurrentBook = ({ book }) => {
-  if (book == null) return (null);
-
+const CurrentBook = ({ }) => {
+  const book = useSelector((state) => state.books.currentBook);
+  const currentChapter = useSelector((state) => state.books.currentChapter);
+  
   const navigation = useNavigation();
 
-  const currentPage = "Trang 2 ";
-  const currentChapter = "| Chương 3 "
-  const currentProgress = "| 10%"
+  if (book == null) return (null);
+
+  const chapterListLength = book.chapterList.length || 1;
+  const currentProgress = ((currentChapter + 1) / chapterListLength) * 100;
 
   return (
     <View style={styles.cb_container}>
@@ -58,15 +60,21 @@ const CurrentBook = ({ book }) => {
           numberOfLines={4}
         >{book.title}</Text>
         <Text style={styles.cb_desAuthor}>{book.author}</Text>
-        <Text style={styles.cb_desProgress}>{currentPage}{currentChapter}{currentProgress}</Text>
+        <Text style={styles.cb_desProgress}>
+          {/* {currentPage} */}
+          Chương {currentChapter + 1} | {currentProgress}%
+        </Text>
       </View>
       <TouchableOpacity style={styles.decoButton}
         activeOpacity={1}
-        onPress={() => navigation.navigate('PageScreen')}
+        onPress={() => {
+          // dispatch(selectChapter(0))
+          navigation.navigate('PageScreen')
+        }}
       >
         <DecoButton ButtonText="ĐỌC TIẾP" ButtonIcon="import-contacts" />
       </TouchableOpacity>
-    </View>
+    </View >
   )
 }
 

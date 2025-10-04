@@ -6,11 +6,74 @@ import MaterialIcons from '@react-native-vector-icons/material-icons';
 
 import { colors } from './GlobalStyle';
 import { Filigree5_Bottom, Filigree5_Top, Filigree6_Top, Filigree6_Bottom, Filigree1, Filigree2 } from './Decorations/Filigree';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectBook, selectChapter } from '../slices/bookSlice';
 
-const bookDatabase = require('../assets/_bookDatabase.json');
+const Header = ({ showChapterPicker, setShowChapterPicker }) => {
+  const navigation = useNavigation();
+  const [right_isVisible, setRightIsVisible] = useState(false);
+
+  const currentChapter = useSelector((state) => state.books.currentChapter)
+  const currentChapterTitle = useSelector((state) => state.books.currentBook.chapterList[currentChapter]);
+
+  return (
+    <View>
+      <View style={styles.h_container}>
+        <TouchableOpacity style={styles.h_button}>
+          <MaterialIcons name="arrow-back" color={colors.white} size={30}
+            onPress={() => navigation.goBack()}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.h_chapterSelect}
+          onPress={() => {
+            setRightIsVisible(false)
+            setShowChapterPicker(!showChapterPicker)
+          }}
+        >
+          <Text style={styles.h_chapterSelectText}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            Chương {currentChapter + 1}
+            {currentChapterTitle != null && ': '}
+            {currentChapterTitle}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.h_button}
+          onPress={() => {
+            setRightIsVisible(!right_isVisible)
+            setShowChapterPicker(false)
+          }}
+        >
+          <MaterialIcons name="menu" color={colors.white} size={30} />
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.sideTabContainer}>
+        {
+          right_isVisible &&
+          <Pressable style={styles.sideTabBackground}
+            onPress={() => {
+              setRightIsVisible(false)
+            }}
+          />
+        }
+        {
+          right_isVisible &&
+          <SideTabRight setRightIsVisible={setRightIsVisible} />
+        }
+      </View>
+    </View>
+  )
+}
 
 const SideTabRight = ({ setRightIsVisible }) => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const currentBook = useSelector((state) => state.books.currentBook)
+
   return (
     <View style={styles.str_container}>
       <View style={styles.str_menuContainer}>
@@ -19,8 +82,9 @@ const SideTabRight = ({ setRightIsVisible }) => {
 
         <TouchableOpacity style={styles.str_menuButton}
           onPress={() => {
-            navigation.navigate('BookDetailScreen')
+            dispatch(selectBook(currentBook))
             setRightIsVisible(false)
+            navigation.navigate('BookDetailScreen')
           }}
         >
           <MaterialIcons name="info" color={colors.gold} size={20} />
@@ -44,75 +108,11 @@ const SideTabRight = ({ setRightIsVisible }) => {
     </View>
   )
 }
-const Header = ({ showChapterPicker, setShowChapterPicker, chapterPicked }) => {
-  const navigation = useNavigation();
-  const [right_isVisible, setRightIsVisible] = useState(false);
 
-  const chapterNumber = chapterPicked + 1;
-  const chapterName = chapterList.at(chapterPicked).title;
+const PageDisplay = ({ setShowChapterPicker, showChapterPicker }) => {
+  const currentChapter = useSelector((state) => state.books.currentChapter)
+  const currentChapterText = useSelector((state) => state.books.currentBook.chapterContent[currentChapter])
 
-  return (
-    <View>
-      <View style={styles.h_container}>
-        <TouchableOpacity style={styles.h_button}>
-          <MaterialIcons name="arrow-back" color={colors.white} size={30}
-            onPress={() => navigation.goBack()}
-          />
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.h_chapterSelect}
-          onPress={() => {
-            setRightIsVisible(false)
-            setShowChapterPicker(!showChapterPicker)
-          }}
-        >
-          <Text style={styles.h_chapterSelectText}
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            Chương {chapterNumber}: {chapterName}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.h_button}
-          onPress={() => {
-            setRightIsVisible(!right_isVisible)
-            setShowChapterPicker(false)
-          }}
-        >
-          <MaterialIcons name="menu" color={colors.white} size={30} />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.sideTabContainer}>
-        {right_isVisible && (
-          <Pressable style={styles.sideTabBackground}
-            onPress={() => {
-              setRightIsVisible(false)
-            }}
-          />
-        )}
-        {right_isVisible && (<SideTabRight setRightIsVisible={setRightIsVisible}/>)}
-      </View>
-    </View>
-  )
-}
-const chapterList = [
-  {
-    title: 'Prologue',
-    content: 'The morning of King Joffrey’s name day dawned bright and windy, with the long tail of the great comet visible through the high scuttling clouds. Sansa was watching it from her tower window when Ser Arys Oakheart arrived to escort her down to the tourney grounds. “What do you think it means?” she asked him. “Glory to your betrothed,” Ser Arys answered at once. “See how it flames across the sky today on His Grace’s name day, as if the gods themselves had raised a banner in his honor. The smallfolk have named it King Joffrey’s Comet.” Doubtless that was what they told Joffrey; Sansa was not so sure. “I’ve heard servants calling it the Dragon’s Tail.”'
-  },
-  {
-    title: 'Arya',
-    content: 'At Winterfell they had called her “Arya Horseface” and she’d thought nothing could be worse, but that was before the orphan boy Lommy Greenhands had named her “Lumpyhead.” Her head felt lumpy when she touched it. When Yoren had dragged her into that alley she’d thought he meant to kill her, but the sour old man had only held her tight, sawing through her mats and tangles with his dagger. She remembered how the breeze sent the fistfuls of dirty brown hair skittering across the paving stones, toward the sept where her father had died. “I’m taking men and boys from the city,” Yoren growled as the sharp steel scraped at her head. “Now you hold still, boy.” By the time he had finished, her scalp wasnothing but tufts and stubble.'
-  },
-  {
-    title: 'Sansa',
-    content: 'The morning of King Joffrey’s name day dawned bright and windy, with the long tail of the great comet visible through the high scuttling clouds. Sansa was watching it from her tower window when Ser Arys Oakheart arrived to escort her down to the tourney grounds. “What do you think it means?” she asked him. “Glory to your betrothed,” Ser Arys answered at once. “See how it flames across the sky today on His Grace’s name day, as if the gods themselves had raised a banner in his honor. The smallfolk have named it King Joffrey’s Comet.” Doubtless that was what they told Joffrey; Sansa was not so sure. “I’ve heard servants calling it the Dragon’s Tail.”'
-  },
-]
-
-const PageDisplay = ({ setShowChapterPicker, showChapterPicker, setChapterPicked, chapterPicked }) => {
-  const chapterContent = chapterList.at(chapterPicked).content;
   return (
     <View style={styles.p_container}>
       <LinearGradient
@@ -123,37 +123,47 @@ const PageDisplay = ({ setShowChapterPicker, showChapterPicker, setChapterPicked
       <Filigree5_Bottom />
 
       <View style={styles.p_textDisplay}>
-        {showChapterPicker &&
+        {
+          showChapterPicker &&
           <ChapterPicker
             setShowChapterPicker={setShowChapterPicker}
-            setChapterPicked={setChapterPicked}
-            chapterPicked={chapterPicked}
           />
         }
+
         <ScrollView bounces={false} overScrollMode="never" showsVerticalScrollIndicator={false}>
           <Text style={styles.p_text}>
-            {chapterContent}
+            {currentChapterText}
           </Text>
         </ScrollView>
+
       </View>
     </View>
   )
 }
 
-const ChapterPicker = ({ setShowChapterPicker, setChapterPicked, chapterPicked }) => {
+const ChapterPicker = ({ setShowChapterPicker }) => {
+  const dispatch = useDispatch();
+  const currentChapter = useSelector((state) => state.books.currentChapter);
+  const chapterList = useSelector((state) => state.books.currentBook.chapterList);
+
   const ChapterComponent = ({ index, chapter }) => {
     return (
       <TouchableOpacity style={styles.cc_container}
         onPress={() => {
-          setChapterPicked(index)
+          dispatch(selectChapter({ currentChapter: index}))
           setShowChapterPicker(false)
         }}
       >
-        <View style={[styles.cc_decoration, chapterPicked == index && styles.cc_decoration_active]} />
-        <Text style={[styles.cc_text, chapterPicked == index && styles.cc_text_active]}>Chương {index + 1}: {chapter.title}</Text>
+        <View style={[styles.cc_decoration, currentChapter == index && styles.cc_decoration_active]} />
+        <Text style={[styles.cc_text, currentChapter == index && styles.cc_text_active]}>
+          Chương {index + 1}
+          {chapter != null && ": "}
+          {chapter}
+        </Text>
       </TouchableOpacity>
     )
   }
+
   return (
     <View style={styles.cp_container}>
       <ScrollView
@@ -161,12 +171,11 @@ const ChapterPicker = ({ setShowChapterPicker, setChapterPicked, chapterPicked }
         {
           chapterList.map((chapter, index) => (
             <ChapterComponent
-              chapterPicked={chapterPicked}
               index={index}
               chapter={chapter}
-              setChapterPicked={setChapterPicked}
-            />)
-          )
+              key={index}
+            />
+          ))
         }
         <Filigree2 />
       </ScrollView>
@@ -176,19 +185,16 @@ const ChapterPicker = ({ setShowChapterPicker, setChapterPicked, chapterPicked }
 
 const PageScreen = () => {
   const [showChapterPicker, setShowChapterPicker] = useState(false);
-  const [chapterPicked, setChapterPicked] = useState(0);
+
   return (
     <View style={styles.container}>
       <Header
-        chapterPicked={chapterPicked}
         showChapterPicker={showChapterPicker}
         setShowChapterPicker={setShowChapterPicker}
       />
       <PageDisplay
-        setShowChapterPicker={setShowChapterPicker}
-        chapterPicked={chapterPicked}
-        setChapterPicked={setChapterPicked}
         showChapterPicker={showChapterPicker}
+        setShowChapterPicker={setShowChapterPicker}
       />
     </View>
   );

@@ -1,16 +1,13 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Pressable } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@react-native-vector-icons/material-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-
-import { useDispatch } from 'react-redux';
 
 import { colors } from '../GlobalStyle';
 import { Filigree3 } from '../Decorations/Filigree';
-import { searchForBooks, viewBookType } from '../../slices/bookSlice';
 
-const ScreenTitle = ({ title, icon }) => {
+const ScreenTitle = ({ title, icon, customIconPosition }) => {
+    const position = customIconPosition == null ? 0 : customIconPosition;
+
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -18,7 +15,7 @@ const ScreenTitle = ({ title, icon }) => {
 
                 <View style={styles.bottomBorderContainer}>
                     <View style={styles.bottomBorder} />
-                    <View style={styles.iconContainer}>
+                    <View style={[styles.iconContainer, { bottom: position }]}>
                         <MaterialIcons size={26} color={colors.gold} name={icon} />
                     </View>
                     <View style={styles.bottomBorder} />

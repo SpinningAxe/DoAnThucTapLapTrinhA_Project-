@@ -16,6 +16,7 @@ import CreateStoryScreen from './screens/CreateStoryScreen';
 import AccountScreen from './screens/AccountScreen';
 import NotificationScreen from './screens/NotificationScreen';
 import LoginScreen from './screens/LoginScreen';
+import GenreListingScreen from './screens/GenreListingScreen';
 
 import { Provider } from "react-redux";
 import { store } from "./store";
@@ -44,6 +45,7 @@ export default function App() {
           <Stack.Screen name="AccountScreen" component={AccountScreen} options={{ title: 'AccountScreen' }} />
           <Stack.Screen name="NotificationScreen" component={NotificationScreen} options={{ title: 'NotificationScreen' }} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'LoginScreen' }} />
+          <Stack.Screen name="GenreListingScreen" component={GenreListingScreen} options={{ title: 'GenreListingScreen' }} />
 
         </Stack.Navigator>
       </NavigationContainer>
