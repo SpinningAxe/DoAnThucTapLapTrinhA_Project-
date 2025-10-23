@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateUserInfo } from '../slices/accountSlice';
 import { colors, globalStyles } from './GlobalStyle';
 import HeaderMain from './Components/HeaderMain';
 import { Filigree9 } from './Decorations/Filigree';
@@ -9,16 +11,33 @@ import ScreenTitle from './Components/ScreenTitle';
 
 const AccountEdit = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.account.user);
 
-  const [username, setUsername] = useState("Alt Schwift X");
-  const [realname, setRealname] = useState("Đoàn Thị Nguyên Sa");
-  const [email, setEmail] = useState("AltSchwiftX@gmail.com");
+  const [username, setUsername] = useState(user?.username || "");
+  const [realname, setRealname] = useState(user?.realname || "");
+  const [email, setEmail] = useState(user?.email || "");
   const [day, setDay] = useState("12");
   const [month, setMonth] = useState("3");
   const [year, setYear] = useState("1234");
 
+  // Cập nhật state khi user data thay đổi
+  useEffect(() => {
+    if (user) {
+      setUsername(user.username || "");
+      setRealname(user.realname || "");
+      setEmail(user.email || "");
+    }
+  }, [user]);
+
   const handleSave = () => {
-    alert("Thông tin đã được lưu!");
+    const updatedData = {
+      username,
+      realname,
+      email,
+    };
+    
+    dispatch(updateUserInfo(updatedData));
     navigation.goBack();
   };
 

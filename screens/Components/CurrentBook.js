@@ -9,8 +9,8 @@ import { colors, bookCover } from '../GlobalStyle';
 import { Filigree2, Filigree4 } from '../Decorations/Filigree';
 import { DecoButton } from '../Decorations/DecoButton';
 
-const CurrentBook = ({ }) => {
-  const book = useSelector((state) => state.books.currentBook);
+const CurrentBook = ({ book: propBook }) => {
+  const book = propBook || useSelector((state) => state.books.currentBook);
   const chaptersOfSelectedBook = useSelector((state) => state.books.chaptersOfSelectedBook);
   const currentChapter = useSelector((state) => state.books.currentChapter);
   
@@ -18,8 +18,9 @@ const CurrentBook = ({ }) => {
 
   if (book == null) return (null);
 
-  const totalChapter = chaptersOfSelectedBook.length || 1;
-  const currentProgress = Math.round(((currentChapter + 1) / totalChapter) * 100);
+  const totalChapter = chaptersOfSelectedBook?.length || 1;
+  const safeCurrentChapter = currentChapter || 0;
+  const currentProgress = Math.round(((safeCurrentChapter + 1) / totalChapter) * 100);
 
   return (
     <View style={styles.cb_container}>
@@ -61,7 +62,7 @@ const CurrentBook = ({ }) => {
         >{book.title}</Text>
         <Text style={styles.cb_desAuthor}>{book.author}</Text>
         <Text style={styles.cb_desProgress}>
-          Chương {currentChapter + 1} | {currentProgress}%
+          Chương {safeCurrentChapter + 1} | {currentProgress}%
         </Text>
       </View>
       <TouchableOpacity style={styles.decoButton}
@@ -147,6 +148,7 @@ const styles = StyleSheet.create({
     height: 220,
     width: '100%',
     marginBottom: 60,
+    marginTop: 60,
 
     backgroundColor: colors.white,
     borderBottomColor: colors.gray,

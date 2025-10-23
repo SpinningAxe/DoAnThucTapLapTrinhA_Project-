@@ -36,8 +36,8 @@ const Header = ({ showChapterPicker, setShowChapterPicker }) => {
             ellipsizeMode="tail"
           >
             Chương {currentChapter + 1}
-            {chaptersOfSelectedBook[currentChapter].chapterTitle != null && ': '}
-            {chaptersOfSelectedBook[currentChapter].chapterTitle}
+            {chaptersOfSelectedBook?.[currentChapter]?.chapterTitle != null && ': '}
+            {chaptersOfSelectedBook?.[currentChapter]?.chapterTitle}
           </Text>
         </TouchableOpacity>
 
@@ -158,8 +158,8 @@ const ChapterPicker = ({ setShowChapterPicker }) => {
         <View style={[styles.cc_decoration, currentChapter == index && styles.cc_decoration_active]} />
         <Text style={[styles.cc_text, currentChapter == index && styles.cc_text_active]}>
           Chương {index + 1}
-          {chapter.chapterTitle != null && ": "}
-          {chapter.chapterTitle}
+          {chapter?.chapterTitle != null && ": "}
+          {chapter?.chapterTitle}
         </Text>
       </TouchableOpacity>
     )
