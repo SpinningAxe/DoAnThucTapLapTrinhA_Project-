@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React, {useEffect}  from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from "react-redux";
 import { LinearGradient } from 'expo-linear-gradient';
 
@@ -8,6 +8,8 @@ import HeaderMain from './Components/HeaderMain';
 import CurrentBook from './Components/CurrentBook';
 import BookList from './Components/BookList';
 import FooterMain from './Components/FooterMain';
+
+import { fetchBookDatabase, fetchAllData } from '../slices/bookSlice';
 
 const Quotes = [
   "A mind needs books\nas a sword needs a whetstone.",
@@ -21,6 +23,7 @@ const Quotes = [
 ]
 
 const createRandomList = (array, count) => {
+  if (!array || array.length === 0) return [];
   return [...array]
     .sort(() => Math.random() - 0.5)
     .slice(0, count);
@@ -34,6 +37,7 @@ const Catalogue = ({ catalogueList }) => {
   const catalogueRow_1 = catalogueList.slice(0, 3);
   const catalogueRow_2 = catalogueList.slice(3, 7);
   const catalogueRow_3 = catalogueList.slice(7, 10);
+  
   return (
     <View style={styles.c_container}>
       <LinearGradient
@@ -42,7 +46,7 @@ const Catalogue = ({ catalogueList }) => {
       />
       <LinearGradient
         colors={['transparent', colors.black]}
-        style={[globalStyles.shadow, globalStyles.bottomShadow, {opacity: 0.3,}]}
+        style={[globalStyles.shadow, globalStyles.bottomShadow, { opacity: 0.3, }]}
       />
       <Text style={styles.c_text}>{Quotes[randomQuote]}</Text>
 
@@ -89,13 +93,59 @@ const Catalogue = ({ catalogueList }) => {
     </View>
   )
 }
+
+const LoadingScreen = () => (
+  <View style={[styles.container, styles.loadingContainer]}>
+    <ActivityIndicator size="large" color={colors.primary} />
+    <Text style={styles.loadingText}>Loading books...</Text>
+  </View>
+);
+
+const ErrorScreen = ({ error, onRetry }) => (
+  <View style={[styles.container, styles.errorContainer]}>
+    <Text style={styles.errorText}>Error loading data</Text>
+    <Text style={styles.errorSubText}>{error}</Text>
+    <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
+      <Text style={styles.retryButtonText}>Retry</Text>
+    </TouchableOpacity>
+  </View>
+);
+
 const MainScreen = ({ navigation }) => {
-  const bookDatabase = useSelector((state) => state.books.bookDatabase);
+  const dispatch = useDispatch();
+  const { 
+    bookDatabase, 
+    loading, 
+    error 
+  } = useSelector((state) => state.books);
+  
   const currentBook = useSelector((state) => state.books.selectedBook);
 
+  useEffect(() => {
+    dispatch(fetchBookDatabase());
+  }, [dispatch]);
+
+  const handleRetry = () => {
+    dispatch(fetchBookDatabase());
+  };
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  if (error) {
+    return <ErrorScreen error={error} onRetry={handleRetry} />;
+  }
+
   const catalogueList = createRandomList(bookDatabase, 10);
-  const listOfBooks = createRandomList(bookDatabase.filter(book => book.type == "sách chữ"), 10);
-  const listOfComics = createRandomList(bookDatabase.filter(book => book.type == "truyện tranh"), 10);
+  const listOfBooks = createRandomList(
+    bookDatabase.filter(book => book.type == "sách chữ"), 
+    10
+  );
+  const listOfComics = createRandomList(
+    bookDatabase.filter(book => book.type == "truyện tranh"), 
+    10
+  );
 
   return (
     <View style={styles.container}>
@@ -118,6 +168,63 @@ const MainScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  loadingContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 16,
+    fontSize: 16,
+    color: colors.text,
+  },
+  errorContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  errorText: {
+    fontSize: 18,
+    color: colors.error,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  errorSubText: {
+    fontSize: 14,
+    color: colors.text,
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  retryButton: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: colors.white,
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  c_container: {
+    // your existing styles
+  },
+  c_text: {
+    // your existing styles
+  },
+  c_row: {
+    // your existing styles
+  },
+  c_book: {
+    // your existing styles
+  },
+  c_bookImg: {
+    // your existing styles
+  },
+
   container: {
     flex: 1,
     width: '100%',

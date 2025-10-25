@@ -5,8 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from "react-redux";
 
 import { colors, globalStyles } from './GlobalStyle';
-import { Filigree2, Filigree4, Filigree5_Bottom, Filigree5_Top, Filigree8_BottomLeft, Filigree8_BottomRight, Filigree8_TopLeft, Filigree8_TopRight, Filigree9 } from './Decorations/Filigree';
-import { OrnateButton, OrnateOption } from './Decorations/DecoButton';
+import { Filigree2, Filigree4 } from './Decorations/Filigree';
+import { OrnateButton } from './Decorations/DecoButton';
 import MaterialIcons from '@react-native-vector-icons/material-icons';
 import { setUserCreation } from '../slices/bookSlice';
 
@@ -27,7 +27,7 @@ const CreateStoryHeader = () => {
                 colors={['transparent', colors.black]}
                 style={[globalStyles.shadow, globalStyles.rightShadow, { height: 100 }]}
             />
-            
+
             <TouchableOpacity style={styles.csh_button}
                 onPress={() => navigation.goBack()}
             >
