@@ -12,6 +12,7 @@ import { DirectionButton_Left, DirectionButton_Right } from './Decorations/DecoB
 import { useSelector } from 'react-redux';
 import ScreenTitle from './Components/ScreenTitle';
 import FooterMain from './Components/FooterMain';
+import ScreenSubTitle from './Components/ScreenSubTitle';
 
 const ResultCount = ({ searchType, searchKeyword, searchResultList }) => {
     return (
@@ -76,22 +77,19 @@ const ResultButton = ({ page, setPage, totalPage }) => {
 const ResultDisplay = ({ page, bookList }) => {
     const data = bookList.slice((page - 1) * 7, page * 7)
     const navigation = useNavigation();
+    
     return (
         <View style={styles.rd_container}>
-            {/* 
-            <FlatList
-                data={data}
-                renderItem={({ item }) => <BookItem navigation={navigation} />}
-                numColumns={2}
-                scrollEnabled={false}
-            />             */}
-
-            <FlatList
-                data={data}
-                renderItem={(bookItem) => <BookItem_Wide navigation={navigation} book={bookItem.item} />}
-                keyExtractor={bookItem => bookItem.id}
-                scrollEnabled={false}
-            />
+            {data.length > 0 ? (
+                <FlatList
+                    data={data}
+                    renderItem={({ item }) => <BookItem_Wide navigation={navigation} book={item} />}
+                    keyExtractor={(item, index) => item.bookId || item.id || index.toString()}
+                    scrollEnabled={false}
+                />
+            ) : (
+                <Text style={styles.noDataText}>Không có dữ liệu để hiển thị</Text>
+            )}
         </View>
     )
 }
@@ -180,23 +178,29 @@ const formatCompactNumber = (number) => {
 
 const LibraryListingScreen = ({ navigation }) => {
     const searchResultList = useSelector((state) => state.books.searchResultList);
+    const bookDatabase = useSelector((state) => state.books.bookDatabase);
     const searchType = useSelector((state) => state.books.searchType);
     const searchKeyword = useSelector((state) => state.books.searchKeyword);
     const [page, setPage] = useState(1);
-    const totalPage = Math.ceil(searchResultList.length / 7);
-
+    
+    // Sử dụng searchResultList nếu có, nếu không thì dùng bookDatabase
+    const displayList = searchResultList.length > 0 ? searchResultList : bookDatabase;
+    const totalPage = Math.ceil(displayList.length / 7);
+    
     return (
         <View style={styles.container}>
             <HeaderMain />
             <ScrollView bounces={false} overScrollMode="never">
                 <ScreenTitle title={"THƯ VIỆN"} icon={"account-balance"} />
 
+                <ScreenSubTitle title={searchType ? `${searchType}: ${searchKeyword}` : "Tất cả sách"} />
+
                 <ResultButton page={page}
                     setPage={setPage}
                     totalPage={totalPage}
                 />
 
-                <ResultDisplay page={page} bookList={searchResultList} />
+                <ResultDisplay page={page} bookList={displayList} />
 
                 <ResultButton page={page}
                     setPage={setPage}
@@ -477,6 +481,13 @@ const styles = StyleSheet.create({
         // position: 'absolute',
         // bottom: 0,
         paddingBottom: 120
+    },
+    noDataText: {
+        color: colors.white,
+        fontSize: 14,
+        textAlign: 'center',
+        fontWeight: 'light',
+        marginTop: 20,
     }
 });
 

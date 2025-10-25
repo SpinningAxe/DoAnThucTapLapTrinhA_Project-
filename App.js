@@ -20,6 +20,7 @@ import CreateStoryScreen_Detail from './screens/CreateStoryScreen_Detail';
 import CreateStoryScreen_MoreDetail from './screens/CreateStoryScreen_MoreDetail';
 import CreateStoryScreen_Page from './screens/CreateStoryScreen_Page';
 import AccountScreen from './screens/AccountScreen';
+import AccountEdit from './screens/AccountEdit';
 import NotificationScreen from './screens/NotificationScreen';
 import LoginScreen from './screens/LoginScreen';
 import GenreListingScreen from './screens/GenreListingScreen';
@@ -59,6 +60,7 @@ export default function App() {
 
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'LoginScreen' }} />
           <Stack.Screen name="AccountScreen" component={AccountScreen} options={{ title: 'AccountScreen' }} />
+          <Stack.Screen name="AccountEdit" component={AccountEdit} options={{ title: 'AccountEdit' }} />
 
           <Stack.Screen name="LibraryScreen" component={LibraryScreen} options={{ title: 'LibraryScreen' }} />
           <Stack.Screen name="LibraryListingScreen" component={LibraryListingScreen} options={{ title: 'LibraryListingScreen' }} />

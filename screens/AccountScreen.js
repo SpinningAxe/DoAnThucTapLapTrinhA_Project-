@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from "react-redux";
+import { logoutUser } from '../slices/accountSlice';
 
 import { colors, globalStyles } from './GlobalStyle';
 import HeaderMain from './Components/HeaderMain';
@@ -20,10 +21,33 @@ const createRandomList = (array, count) => {
 
 const AccountScreen = () => {
     const bookDatabase = useSelector((state) => state.books.bookDatabase);
+    const user = useSelector((state) => state.account.user);
+    const dispatch = useDispatch();
 
     const listOfBooks = createRandomList(bookDatabase, 10);
 
     const navigation = useNavigation();
+
+    const handleLogout = () => {
+        Alert.alert(
+            "Đăng xuất",
+            "Bạn có chắc chắn muốn đăng xuất?",
+            [
+                {
+                    text: "Hủy",
+                    style: "cancel"
+                },
+                {
+                    text: "Đăng xuất",
+                    style: "destructive",
+                    onPress: () => {
+                        dispatch(logoutUser());
+                        navigation.navigate('LoginScreen');
+                    }
+                }
+            ]
+        );
+    };
     
     return (
         <View style={styles.container}>
@@ -39,13 +63,11 @@ const AccountScreen = () => {
                 <View style={styles.avatarWrapper}>
                     <View style={styles.avatarContainer}>
                         <Image
-                            source={{ uri: 'https://www.cnet.com/a/img/resize/e58477ebf3a1bb812b68953ea2bf6c5cdc93e825/hub/2019/07/08/631653cd-fb27-476a-bb76-1e8f8b70b87e/troller-t4-trail-1.jpg?auto=webp&width=1200' }}
+                            source={{ uri: user?.avatar || 'https://www.cnet.com/a/img/resize/e58477ebf3a1bb812b68953ea2bf6c5cdc93e825/hub/2019/07/08/631653cd-fb27-476a-bb76-1e8f8b70b87e/troller-t4-trail-1.jpg?auto=webp&width=1200' }}
                             style={styles.avatar}
                         />
                     </View>
                 </View>
-
-
 
                 <View style={styles.ornateTextbox_white}>
                     <View>
@@ -85,7 +107,7 @@ const AccountScreen = () => {
                         <Text style={styles.optionText}>+ Sửa Thông Tin Tài Khoản</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.optionButton}>
+                    <TouchableOpacity style={styles.optionButton} onPress={handleLogout}>
                         <Text style={styles.optionText}>+ Đăng Xuất</Text>
                     </TouchableOpacity>
                 </View>
@@ -198,6 +220,26 @@ const styles = StyleSheet.create({
         color: colors.white,
         fontSize: 15,
         fontWeight: '500',
+    },
+
+    // User info styles
+    userInfoContainer: {
+        alignItems: 'center',
+        marginTop: 20,
+        marginBottom: 30,
+        zIndex: 10,
+    },
+    userName: {
+        color: colors.white,
+        fontSize: 24,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginBottom: 5,
+    },
+    userEmail: {
+        color: colors.lightgray,
+        fontSize: 16,
+        textAlign: 'center',
     },
 });
 

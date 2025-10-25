@@ -54,8 +54,10 @@ const LoginComponent = () => {
 
   // ✅ Theo dõi khi user thay đổi
   React.useEffect(() => {
+    console.log('LoginScreen - user changed:', user);
     if (user) {
-      navigation.replace("MainScreen");
+      console.log('LoginScreen - redirecting to AccountScreen');
+      navigation.replace("AccountScreen");
     }
   }, [user]);
 
@@ -170,7 +172,7 @@ const SignUpComponent = (setIsLogin) => {
       Alert.alert("Đăng ký thành công!");
       setPassword("");
       setRepeatPassword("");
-      navigation.navigate("MainScreen");
+      navigation.navigate("AccountScreen");
     } catch (error) {
       console.log(error);
     }

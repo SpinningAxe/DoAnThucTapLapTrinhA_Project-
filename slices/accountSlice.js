@@ -138,9 +138,52 @@ const accountSlice = createSlice({
     addNewCreationId: (state, action) => {
       const newBookId = action.payload;
       state.creationIdList = [newBookId, ...state.creationIdList];
+    },
+    logoutUser: (state) => {
+      state.user = null;
     }
   },
+  extraReducers: (builder) => {
+    // Login user
+    builder
+      .addCase(loginUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        console.log('accountSlice - loginUser.fulfilled:', action.payload);
+        state.loading = false;
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Register user
+      .addCase(registerUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      // Load user from storage
+      .addCase(loadUserFromStorage.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      // Update user info
+      .addCase(updateUserInfo.fulfilled, (state, action) => {
+        state.user = action.payload;
+      });
+  }
 });
 
-export const { addNewCreationId } = accountSlice.actions;
+export const { addNewCreationId, logoutUser } = accountSlice.actions;
 export default accountSlice.reducer;
