@@ -1,72 +1,38 @@
-import React from "react";
-import {View,Text,StyleSheet,TouchableOpacity,ScrollView,} from "react-native";
+import React, { useEffect } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { loadNotifications } from "../slices/notificationSlice";
 import { colors } from "./GlobalStyle";
 import HeaderMain from "./Components/HeaderMain";
 import ScreenTitle from "./Components/ScreenTitle";
 import { Filigree2 } from "./Decorations/Filigree";
 
-import notificationsData from "../assets/_notiDatabase.json";
-
-// Hàm định dạng dữ liệu thông báo
-function formatNotificationData(data) {
-  const now = new Date();
-  const currentDay = now.getDate();
-  const currentMonth = now.getMonth() + 1;
-
-  return data.map((item) => {
-    const date = new Date(item.time);
-
-    // Kiểm tra nếu thời gian không hợp lệ
-    if (isNaN(date.getTime())) {
-      console.warn("Lỗi định dạng thời gian:", item.time);
-      return {
-        text: item.text,
-        title: "Không xác định",
-        time: "--:--",
-      };
-    }
-
-    // Chuyển sang giờ Việt Nam (UTC+7)
-    const vnTime = new Date(date.getTime() + 7 * 60 * 60 * 1000);
-    const hours = vnTime.getHours().toString().padStart(2, "0");
-    const minutes = vnTime.getMinutes().toString().padStart(2, "0");
-
-    const displayTime = `${hours}:${minutes}`;
-
-    const day = vnTime.getDate();
-    const month = vnTime.getMonth() + 1;
-
-    // So sánh ngày hiện tại với ngày thông báo
-    const isToday = day === currentDay && month === currentMonth;
-    const title = isToday ? "Hôm nay" : `${day}/${month}`;
-
-    return {
-      text: item.text,
-      title: title,
-      time: displayTime,
-    };
-  });
-}
-
-// Component chính
 const NotificationScreen = () => {
-  // Định dạng dữ liệu thô từ JSON
-  const formattedData = formatNotificationData(notificationsData);
+  const dispatch = useDispatch();
+  const { groupedNotifications, isLoading, error } = useSelector(
+    (state) => state.notification
+  );
 
-  // Gom nhóm thông báo theo tiêu đề (Hôm nay, 22/10, ...)
-  const groups = formattedData.reduce((acc, item) => {
-    const existingGroup = acc.find((g) => g.title === item.title);
-    if (existingGroup) {
-      existingGroup.items.push(item);
-    } else {
-      acc.push({ title: item.title, items: [item] });
-    }
-    return acc;
-  }, []);
+  useEffect(() => {
+    dispatch(loadNotifications());
+  }, [dispatch]);
 
-  console.log("Dữ liệu sau khi định dạng:", formattedData);
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text style={{ color: "white" }}>Đang tải thông báo...</Text>
+      </View>
+    );
+  }
 
-  // Giao diện
+  if (error) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text style={{ color: "red" }}>Lỗi tải thông báo: {error}</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <HeaderMain />
@@ -79,15 +45,13 @@ const NotificationScreen = () => {
         <ScreenTitle title={"THÔNG BÁO"} icon={"notifications"} />
 
         <View style={styles.notificationSection}>
-          {groups.map((group) => (
+          {groupedNotifications.map((group) => (
             <View key={group.title} style={{ marginBottom: 12 }}>
-              {/* Header nhóm (Hôm nay ,....) */}
               <View style={styles.sectionHeader}>
                 <Text style={styles.sectionTitle}>{group.title}</Text>
                 <View style={styles.line} />
               </View>
 
-              {/* Items */}
               {group.items.map((item, idx) => (
                 <TouchableOpacity
                   style={styles.notificationItem}
@@ -96,11 +60,7 @@ const NotificationScreen = () => {
                 >
                   <View style={styles.bullet} />
                   <View style={styles.notificationContent}>
-                    <Text
-                      style={styles.notificationText}
-                      numberOfLines={1}
-                      ellipsizeMode="tail"
-                    >
+                    <Text style={styles.notificationText} numberOfLines={1}>
                       {item.text}
                     </Text>
                     <Text style={styles.notificationTime}>{item.time}</Text>
