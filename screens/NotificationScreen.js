@@ -20,7 +20,7 @@ const NotificationScreen = () => {
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <Text style={{ color: "white" }}>Đang tải thông báo...</Text>
+        <Text style={{ color: "white" }}>Đang tải thông báo.....</Text>
       </View>
     );
   }
