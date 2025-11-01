@@ -3,14 +3,13 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'rea
 import { LinearGradient } from 'expo-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import { useSelector, useDispatch } from "react-redux";
-import { selectChapter } from '../../slices/bookSlice';
 
 import { colors, bookCover } from '../GlobalStyle';
 import { Filigree2, Filigree4 } from '../Decorations/Filigree';
 import { DecoButton } from '../Decorations/DecoButton';
 
-const CurrentBook = ({ book: propBook }) => {
-  const book = propBook || useSelector((state) => state.books.currentBook);
+const CurrentBook = () => {
+  const book = useSelector((state) => state.books.currentBook);
   const chaptersOfSelectedBook = useSelector((state) => state.books.chaptersOfSelectedBook);
   const currentChapter = useSelector((state) => state.books.currentChapter);
   
@@ -69,6 +68,7 @@ const CurrentBook = ({ book: propBook }) => {
         activeOpacity={1}
         onPress={() => {
           // dispatch(selectChapter())
+
           navigation.navigate('PageScreen')
         }}
       >
@@ -88,57 +88,6 @@ const styles = StyleSheet.create({
   },
 
   //-------------------------------------------------------//
-  // CATALOGUE
-
-  c_container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-
-    height: 450,
-    width: "100%",
-
-    overflow: 'hidden',
-    backgroundColor: colors.black,
-  },
-  c_text: {
-    position: "absolute",
-
-    color: colors.white,
-    textAlign: 'center',
-    fontStyle: 'italic',
-    fontWeight: 'light',
-    letterSpacing: 3,
-    lineHeight: 25
-  },
-  c_book: {
-    width: "30%",
-    height: "100%",
-    marginHorizontal: 5,
-
-    backgroundColor: colors.gray,
-    opacity: 0.1,
-  },
-  c_bookImg: {
-    width: "100%",
-    height: "100%",
-  },
-  c_row: {
-    position: "absolute",
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-
-    zIndex: -99,
-
-    width: "100%",
-    height: "40%",
-    paddingVertical: 5,
-
-    overflow: 'hidden',
-    backgroundColor: colors.black,
-  },
-
-  //-------------------------------------------------------//
   // CURRENT BOOK
 
   cb_container: {
@@ -148,7 +97,6 @@ const styles = StyleSheet.create({
     height: 220,
     width: '100%',
     marginBottom: 60,
-    marginTop: 60,
 
     backgroundColor: colors.white,
     borderBottomColor: colors.gray,

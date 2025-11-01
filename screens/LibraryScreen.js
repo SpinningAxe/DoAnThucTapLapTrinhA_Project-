@@ -64,19 +64,20 @@ const LibraryScreen = () => {
             <HeaderMain />
             <ScrollView bounces={false} overScrollMode="never" style={{ width: '100%' }}>
                 <ScreenTitle title={"THƯ VIỆN"} icon={"account-balance"} />
+                <View style={{ marginTop: 25 }}/>
 
-                <CurrentBook book={book} />
+                <CurrentBook />
 
-                <BookList bookType="ĐỌC GẦN ĐÂY" listOfBooks={listOfBooks} customDestination={"LibraryListingScreen"}/>
-                
-                <BookList bookType="YÊU THÍCH" listOfBooks={listOfBooks} customDestination={"LibraryListingScreen"}/>
+                <BookList bookType="ĐỌC GẦN ĐÂY" listOfBooks={listOfBooks} customDestination={"LibraryListingScreen"} />
 
-                <BookList bookType="TẢI XUỐNG" listOfBooks={listOfBooks} customDestination={"LibraryListingScreen"}/>
+                <BookList bookType="YÊU THÍCH" listOfBooks={listOfBooks} customDestination={"LibraryListingScreen"} />
 
-                <View style={globalStyles.bottomPadding}/>
+                <BookList bookType="TẢI XUỐNG" listOfBooks={listOfBooks} customDestination={"LibraryListingScreen"} />
+
+                <View style={globalStyles.bottomPadding} />
 
             </ScrollView>
-            <FooterMain currentScreen={1}/>
+            <FooterMain currentScreen={1} />
         </View>
     );
 };

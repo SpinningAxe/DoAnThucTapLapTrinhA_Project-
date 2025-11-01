@@ -28,65 +28,6 @@ const initialState = {
     chaptersOfSelectedCreation: [],
 };
 
-const SERVER_URL = 'http://192.168.0.103:3000';
-
-export const fetchBookDatabase = createAsyncThunk(
-    'books/fetchBookDatabase',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await fetch(`${SERVER_URL}/booksAndChapters/getBookDatabase`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
-
-export const fetchChapterDatabase = createAsyncThunk(
-    'books/fetchChapterDatabase',
-    async (_, { rejectWithValue }) => {
-        try {
-            const response = await fetch(`${SERVER_URL}/booksAndChapters/getChapterDatabase`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
-
-export const fetchAllData = createAsyncThunk(
-    'books/fetchAllData',
-    async (_, { rejectWithValue }) => {
-        try {
-            const [bookResponse, chapterResponse] = await Promise.all([
-                fetch(`${SERVER_URL}/booksAndChapters/getBookDatabase`),
-                fetch(`${SERVER_URL}/booksAndChapters/getChapterDatabase`)
-            ]);
-
-            if (!bookResponse.ok || !chapterResponse.ok) {
-                throw new Error(`HTTP error! status: ${bookResponse.status}, ${chapterResponse.status}`);
-            }
-
-            const [bookData, chapterData] = await Promise.all([
-                bookResponse.json(),
-                chapterResponse.json()
-            ]);
-
-            return { bookData, chapterData };
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
-
 const bookSlice = createSlice({
     name: "book",
     initialState,
@@ -186,15 +127,12 @@ const bookSlice = createSlice({
         updateSelectedBook: (state, action) => {
             const propertyToChange = action.payload;
 
-            // Handle case where propertyToChange is null or undefined
             if (!propertyToChange) {
                 console.log("No property to change provided");
                 return;
             }
-
             console.log("propertyToChange", propertyToChange);
 
-            // Handle multiple properties (like for "series" case)
             if (Array.isArray(propertyToChange.name)) {
                 // For cases like ["series", "bookNum"]
                 propertyToChange.name.forEach((propertyName, index) => {
@@ -213,7 +151,6 @@ const bookSlice = createSlice({
                     }
                 });
             }
-            // Handle single property
             else if (typeof propertyToChange.name === 'string') {
                 if (state.selectedCreation.hasOwnProperty(propertyToChange.name)) {
                     console.log(`Updating ${propertyToChange.name} from`, state.selectedCreation[propertyToChange.name], "to", propertyToChange.value);
@@ -245,64 +182,6 @@ const bookSlice = createSlice({
                 (chapter) => chapter.bookId == bookId
             )
         },
-
-        // Reset to local data in case of API errors
-        resetToLocalData: (state) => {
-            state.bookDatabase = localBookDatabase;
-            state.chapterDatabase = localChapterDatabase;
-            state.error = null;
-            state.loading = false;
-        }
-    },
-    extraReducers: (builder) => {
-        builder
-            // Handle fetchBookDatabase
-            .addCase(fetchBookDatabase.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchBookDatabase.fulfilled, (state, action) => {
-                state.loading = false;
-                state.bookDatabase = action.payload;
-                state.error = null;
-            })
-            .addCase(fetchBookDatabase.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-                // Keep the existing local data instead of setting to null
-                console.log('Failed to fetch book database, using local data');
-            })
-            // Handle fetchChapterDatabase
-            .addCase(fetchChapterDatabase.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchChapterDatabase.fulfilled, (state, action) => {
-                state.loading = false;
-                state.chapterDatabase = action.payload;
-                state.error = null;
-            })
-            .addCase(fetchChapterDatabase.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-                console.log('Failed to fetch chapter database, using local data');
-            })
-            // Handle fetchAllData
-            .addCase(fetchAllData.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchAllData.fulfilled, (state, action) => {
-                state.loading = false;
-                state.bookDatabase = action.payload.bookData;
-                state.chapterDatabase = action.payload.chapterData;
-                state.error = null;
-            })
-            .addCase(fetchAllData.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-                console.log('Failed to fetch all data, using local data');
-            });
     },
 });
 
@@ -316,6 +195,5 @@ export const {
     updateChapter,
     updateSelectedBook,
     setUserCreation,
-    resetToLocalData
 } = bookSlice.actions;
 export default bookSlice.reducer;

@@ -16,6 +16,8 @@ const Header = ({ showChapterPicker, setShowChapterPicker }) => {
   const currentChapter = useSelector((state) => state.books.currentChapter)
   const chaptersOfSelectedBook = useSelector((state) => state.books.chaptersOfSelectedBook);
 
+  if (chaptersOfSelectedBook == null) return;
+
   return (
     <View>
       <View style={styles.h_container}>
@@ -111,8 +113,10 @@ const SideTabRight = ({ setRightIsVisible }) => {
 
 const PageDisplay = ({ setShowChapterPicker, showChapterPicker }) => {
   const chaptersOfSelectedBook = useSelector((state) => state.books.chaptersOfSelectedBook)
-  const currentChapter = useSelector((state)=> state.books.currentChapter)
-  
+  const currentChapter = useSelector((state) => state.books.currentChapter)
+
+  if (chaptersOfSelectedBook.length == 0) return;
+
   const currentChapterText = chaptersOfSelectedBook[currentChapter].chapterContent
   return (
     <View style={styles.p_container}>
@@ -146,12 +150,12 @@ const ChapterPicker = ({ setShowChapterPicker }) => {
   const dispatch = useDispatch();
   const currentChapter = useSelector((state) => state.books.currentChapter);
   const chaptersOfSelectedBook = useSelector((state) => state.books.chaptersOfSelectedBook)
-  
+
   const ChapterComponent = ({ index, chapter }) => {
     return (
       <TouchableOpacity style={styles.cc_container}
         onPress={() => {
-          dispatch(selectChapter({ currentChapter: index}))
+          dispatch(selectChapter({ currentChapter: index }))
           setShowChapterPicker(false)
         }}
       >

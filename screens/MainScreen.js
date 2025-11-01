@@ -1,4 +1,4 @@
-import React, {useEffect}  from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from "react-redux";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -9,7 +9,7 @@ import CurrentBook from './Components/CurrentBook';
 import BookList from './Components/BookList';
 import FooterMain from './Components/FooterMain';
 
-import { fetchBookDatabase, fetchAllData } from '../slices/bookSlice';
+import { fetchFullCollection } from '../slices/bookSlice';
 
 const Quotes = [
   "A mind needs books\nas a sword needs a whetstone.",
@@ -37,7 +37,7 @@ const Catalogue = ({ catalogueList }) => {
   const catalogueRow_1 = catalogueList.slice(0, 3);
   const catalogueRow_2 = catalogueList.slice(3, 7);
   const catalogueRow_3 = catalogueList.slice(7, 10);
-  
+
   return (
     <View style={styles.c_container}>
       <LinearGradient
@@ -94,58 +94,46 @@ const Catalogue = ({ catalogueList }) => {
   )
 }
 
-const LoadingScreen = () => (
-  <View style={[styles.container, styles.loadingContainer]}>
-    <ActivityIndicator size="large" color={colors.primary} />
-    <Text style={styles.loadingText}>Loading books...</Text>
-  </View>
-);
+// const LoadingScreen = () => (
+//   <View style={[styles.container, styles.loadingContainer]}>
+//     <ActivityIndicator size="large" color={colors.primary} />
+//     <Text style={styles.loadingText}>Loading books...</Text>
+//   </View>
+// );
 
-const ErrorScreen = ({ error, onRetry }) => (
-  <View style={[styles.container, styles.errorContainer]}>
-    <Text style={styles.errorText}>Error loading data</Text>
-    <Text style={styles.errorSubText}>{error}</Text>
-    <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
-      <Text style={styles.retryButtonText}>Retry</Text>
-    </TouchableOpacity>
-  </View>
-);
+// const ErrorScreen = ({ error, onRetry }) => (
+//   <View style={[styles.container, styles.errorContainer]}>
+//     <Text style={styles.errorText}>Error loading data</Text>
+//     <Text style={styles.errorSubText}>{error}</Text>
+//     <TouchableOpacity style={styles.retryButton} onPress={onRetry}>
+//       <Text style={styles.retryButtonText}>Retry</Text>
+//     </TouchableOpacity>
+//   </View>
+// );
 
 const MainScreen = ({ navigation }) => {
   const dispatch = useDispatch();
-  const { 
-    bookDatabase, 
-    loading, 
-    error 
-  } = useSelector((state) => state.books);
-  
-  const currentBook = useSelector((state) => state.books.selectedBook);
+  const { bookDatabase, } = useSelector((state) => state.books);
 
-  useEffect(() => {
-    dispatch(fetchBookDatabase());
-  }, [dispatch]);
+  // useEffect(() => {
+  //   dispatch(fetchFullCollection('books'));;
+  // }, [dispatch]);
 
-  const handleRetry = () => {
-    dispatch(fetchBookDatabase());
-  };
+  // const handleRetry = () => {
+  //   dispatch(fetchFullCollection('books'));;
+  // };
 
-  if (loading) {
-    return <LoadingScreen />;
-  }
+  // if (loading) {
+  //   return <LoadingScreen />;
+  // }
 
-  if (error) {
-    return <ErrorScreen error={error} onRetry={handleRetry} />;
-  }
+  // if (error) {
+  //   return <ErrorScreen error={error} onRetry={handleRetry} />;
+  // }
 
   const catalogueList = createRandomList(bookDatabase, 10);
-  const listOfBooks = createRandomList(
-    bookDatabase.filter(book => book.type == "sách chữ"), 
-    10
-  );
-  const listOfComics = createRandomList(
-    bookDatabase.filter(book => book.type == "truyện tranh"), 
-    10
-  );
+  const listOfBooks = createRandomList(bookDatabase.filter(book => book.type == "sách chữ"), 10);
+  const listOfComics = createRandomList(bookDatabase.filter(book => book.type == "truyện tranh"), 10);
 
   return (
     <View style={styles.container}>
@@ -154,7 +142,7 @@ const MainScreen = ({ navigation }) => {
 
         <Catalogue catalogueList={catalogueList} />
 
-        <CurrentBook book={currentBook} />
+        <CurrentBook/>
 
         <BookList bookType="TRUYỆN TRANH" listOfBooks={listOfComics} />
 

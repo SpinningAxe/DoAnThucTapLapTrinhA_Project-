@@ -57,7 +57,6 @@ export default function App() {
           <Stack.Screen name="EditStoryScreen" component={EditStoryScreen} options={{ title: 'EditStoryScreen' }} />
           <Stack.Screen name="EditStoryScreen_Detail" component={EditStoryScreen_Detail} options={{ title: 'EditStoryScreen_Detail' }} />
 
-
           <Stack.Screen name="LoginScreen" component={LoginScreen} options={{ title: 'LoginScreen' }} />
           <Stack.Screen name="AccountScreen" component={AccountScreen} options={{ title: 'AccountScreen' }} />
           <Stack.Screen name="AccountEdit" component={AccountEdit} options={{ title: 'AccountEdit' }} />

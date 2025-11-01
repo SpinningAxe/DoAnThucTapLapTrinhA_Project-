@@ -8,7 +8,7 @@ import { logoutUser } from '../slices/accountSlice';
 import { colors, globalStyles } from './GlobalStyle';
 import HeaderMain from './Components/HeaderMain';
 import { Filigree9, Filigree5_Bottom } from './Decorations/Filigree';
-import { } from './Decorations/DecoButton';
+import { OrnateButton } from './Decorations/DecoButton';
 import ScreenTitle from './Components/ScreenTitle';
 import BookList from './Components/BookList';
 import FooterMain from './Components/FooterMain';
@@ -48,14 +48,14 @@ const AccountScreen = () => {
             ]
         );
     };
-    
+
     return (
         <View style={styles.container}>
             <HeaderMain />
             <ScrollView bounces={false} overScrollMode="never" style={{ width: '100%' }}>
                 <ScreenTitle title={"TÀI KHOẢN"} icon={"person"} />
 
-                <View style={{ width: '100%', height: 400, zIndex: 1 }}>
+                <View style={{ width: '100%', height: 400, zIndex: -1 }}>
                     <Filigree9 />
                 </View>
 
@@ -71,7 +71,6 @@ const AccountScreen = () => {
 
                 <View style={styles.ornateTextbox_white}>
                     <View>
-
                         {/* tên hiển thị dưới avt*/}
                         <Text style={styles.username}>Alt Schwift X
                             <Text style={styles.iconWrapper}>
@@ -90,29 +89,28 @@ const AccountScreen = () => {
                     />
                 </View>
 
-                {/* style listbook */}
-                <View style={styles.bookListWrapper}>
-                    <BookList bookType="SÁNG TÁC CỦA BẠN" listOfBooks={listOfBooks} customDestination={"LibraryListingScreen"} />
-                </View>
+                <BookList bookType="SÁNG TÁC CỦA BẠN"
+                    listOfBooks={listOfBooks}
+                    customDestination={"LibraryListingScreen"}
+                />
 
                 <View style={styles.buttonContainer}>
-                    {/* <TouchableOpacity style={styles.optionButton}>
-                        <Text style={styles.optionText}>+ Sửa Thông Tin Tài Khoản</Text>
-                    </TouchableOpacity> */}
-
                     <TouchableOpacity
-                        style={styles.optionButton}
                         onPress={() => navigation.navigate('AccountEdit')}
                     >
-                        <Text style={styles.optionText}>+ Sửa Thông Tin Tài Khoản</Text>
+                        <OrnateButton
+                            ButtonText={"Sửa Thông Tin Tài Khoản"}
+                            ButtonIcon={"add"}
+                        />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.optionButton} onPress={handleLogout}>
-                        <Text style={styles.optionText}>+ Đăng Xuất</Text>
+                    <TouchableOpacity onPress={handleLogout}>
+                        <OrnateButton
+                            ButtonText={"Đăng Xuất"}
+                            ButtonIcon={"add"}
+                        />
                     </TouchableOpacity>
                 </View>
-
-                {/* <BookList bookType="SÁNG TÁC CỦA BẠN" listOfBooks={listOfBooks} customDestination={"LibraryListingScreen"} /> */}
             </ScrollView>
             <FooterMain currentScreen={4} />
         </View>
@@ -196,7 +194,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         width: '100%',
         alignSelf: 'center',
-        marginTop: 20,
+        marginTop: -10,
         marginBottom: 60, // chừa khoảng phía footer
         position: 'relative',
         zIndex: 10, // đảm bảo hiển thị trên nền và trước footer

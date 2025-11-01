@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 
 import { colors } from './GlobalStyle';
 import HeaderMain from './Components/HeaderMain';
+import FooterMain from './Components/FooterMain';
 import ScreenTitle from './Components/ScreenTitle';
 import { Filigree2 } from './Decorations/Filigree';
 
@@ -59,6 +60,7 @@ const NotificationScreen = () => {
 
         <Filigree2 customPosition={-40} />
       </ScrollView>
+      <FooterMain currentScreen={3} />
     </View>
   );
 };
